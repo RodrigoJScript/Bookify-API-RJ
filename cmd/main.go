@@ -1,7 +1,19 @@
 package main
 
-import "fmt"
+import (
+	"bookify/store"
+	"database/sql"
+	"log"
+)
 
 func main() {
-	fmt.Println("Hello, World!")
+	db, err := sql.Open("sqlite", "db.sqlite")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	if err := store.SeedBooks(db); err != nil {
+		log.Fatal(err)
+	}
 }
