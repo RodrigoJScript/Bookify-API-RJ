@@ -13,3 +13,7 @@ func GetBooks(db *sql.DB) ([]model.Book, error) {
 	}
 	return books, nil
 }
+
+func SeedBooks(db *sql.DB) error {
+	return store.SeedBooks(db)
+}

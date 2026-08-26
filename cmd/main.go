@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bookify/service"
 	"bookify/transport"
 	"database/sql"
 	"fmt"
@@ -15,6 +16,11 @@ func main() {
 		log.Fatal(err)
 	}
 	defer db.Close()
+
+	err = service.SeedBooks(db)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	http.HandleFunc("/books", func(w http.ResponseWriter, r *http.Request) {
 		transport.GetBooks(db, w, r)
