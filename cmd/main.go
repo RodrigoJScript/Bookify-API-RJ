@@ -22,8 +22,17 @@ func main() {
 		log.Fatal(err)
 	}
 
-	http.HandleFunc("/books", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("GET /books", func(w http.ResponseWriter, r *http.Request) {
 		transport.GetBooks(db, w, r)
 	})
+
+	http.HandleFunc("GET /books/{id}", func(w http.ResponseWriter, r *http.Request) {
+		transport.GetBookById(db, w, r)
+	})
+
+	http.HandleFunc("POST /books/create", func(w http.ResponseWriter, r *http.Request) {
+		transport.CreateBook(db, w, r)
+	})
+
 	http.ListenAndServe(":8080", nil)
 }

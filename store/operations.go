@@ -74,3 +74,25 @@ func HasTable(db *sql.DB, tableName string) (bool, error) {
 	}
 	return count > 0, nil
 }
+
+func GetBookById(db *sql.DB, bookID int) (model.Book, error) {
+	var book model.Book
+	err := db.QueryRow("SELECT * FROM books WHERE id = ?", bookID).Scan(&book.ID, &book.Title, &book.Author, &book.Description, &book.Price, &book.Quantity)
+	if err != nil {
+		return model.Book{}, err
+	}
+	return book, nil
+}
+
+func CreateBook(db *sql.DB, book model.Book) (model.Book, error) {
+	result, err := db.Exec("INSERT INTO books (title, author, description, price, quantity) VALUES (?, ?, ?, ?, ?)", book.Title, book.Author, book.Description, book.Price, book.Quantity)
+	if err != nil {
+		return model.Book{}, err
+	}
+	bookID, err := result.LastInsertId()
+	if err != nil {
+		return model.Book{}, err
+	}
+	book.ID = int(bookID)
+	return book, nil
+}
