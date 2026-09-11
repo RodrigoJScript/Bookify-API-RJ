@@ -3,6 +3,7 @@ package store
 import (
 	"bookify/model"
 	"database/sql"
+	"errors"
 
 	_ "modernc.org/sqlite"
 )
@@ -94,5 +95,35 @@ func CreateBook(db *sql.DB, book model.Book) (model.Book, error) {
 		return model.Book{}, err
 	}
 	book.ID = int(bookID)
+	return book, nil
+}
+
+func DeleteBookById(db *sql.DB, bookID int) error {
+	result, err := db.Exec("DELETE FROM books WHERE id = ?", bookID)
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return errors.New("book not found")
+	}
+	return nil
+}
+
+func UpdateBookById(db *sql.DB, bookID int, book model.Book) (model.Book, error) {
+	result, err := db.Exec("UPDATE books SET title = ?, author = ?, description = ?, price = ?, quantity = ? WHERE id = ?", book.Title, book.Author, book.Description, book.Price, book.Quantity, bookID)
+	if err != nil {
+		return model.Book{}, err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return model.Book{}, err
+	}
+	if rowsAffected == 0 {
+		return model.Book{}, errors.New("book not found")
+	}
 	return book, nil
 }

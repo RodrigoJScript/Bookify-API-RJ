@@ -34,5 +34,13 @@ func main() {
 		transport.CreateBook(db, w, r)
 	})
 
+	http.HandleFunc("DELETE /books/{id}", func(w http.ResponseWriter, r *http.Request) {
+		transport.DeleteBook(db, w, r)
+	})
+
+	http.HandleFunc("PUT /books/{id}", func(w http.ResponseWriter, r *http.Request) {
+		transport.UpdateBookById(db, w, r)
+	})
+
 	http.ListenAndServe(":8080", nil)
 }

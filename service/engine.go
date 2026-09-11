@@ -25,3 +25,11 @@ func GetBookById(db *sql.DB, bookID int) (model.Book, error) {
 func CreateBook(db *sql.DB, book model.Book) (model.Book, error) {
 	return store.CreateBook(db, book)
 }
+
+func DeleteBookById(db *sql.DB, bookID int) error {
+	return store.DeleteBookById(db, bookID)
+}
+
+func UpdateBookById(db *sql.DB, bookID int, book model.Book) (model.Book, error) {
+	return store.UpdateBookById(db, bookID, book)
+}

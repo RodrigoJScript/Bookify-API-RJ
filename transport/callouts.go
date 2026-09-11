@@ -58,3 +58,45 @@ func CreateBook(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(createdBook)
 }
+
+func DeleteBook(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+	bookID := r.PathValue("id")
+	bookIDInt, err := strconv.Atoi(bookID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	err = service.DeleteBookById(db, bookIDInt)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func UpdateBookById(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+	bookID := r.PathValue("id")
+	bookIDInt, err := strconv.Atoi(bookID)
+	if bookIDInt == 0 {
+		http.Error(w, "Invalid book ID", http.StatusBadRequest)
+		return
+	}
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	book := model.Book{}
+	err = json.NewDecoder(r.Body).Decode(&book)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	updatedBook, err := service.UpdateBookById(db, bookIDInt, book)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(updatedBook)
+}
